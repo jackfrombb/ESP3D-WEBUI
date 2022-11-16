@@ -19,6 +19,7 @@ var smoothieextuder = new SmoothieChart({
     precision: 1,
   },
 });
+
 var smoothiebed = new SmoothieChart({
   millisPerPixel: 200,
   interpolation: "linear",
@@ -37,6 +38,7 @@ var smoothiebed = new SmoothieChart({
     precision: 1,
   },
 });
+
 var extruder_0_line = new TimeSeries();
 var extruder_1_line = new TimeSeries();
 var extruder_redundant_line = new TimeSeries();
@@ -50,15 +52,18 @@ function init_temperature_panel() {
     strokeStyle: "#808080",
     fillStyle: "rgba(128,128,128,0.3)",
   });
+
   smoothieextuder.addTimeSeries(extruder_0_line, {
     lineWidth: 1,
     strokeStyle: "#ff8080",
     fillStyle: "rgba(255,128,128,0.3)",
   });
+
   smoothieextuder.streamTo(
     document.getElementById("extruderTempgraph"),
     3000 /*delay*/
   );
+
   smoothiebed.streamTo(document.getElementById("bedTempgraph"), 3000 /*delay*/);
 }
 
@@ -101,7 +106,8 @@ function temperature_chamber(enabled) {
       lineWidth: 1,
       strokeStyle: "#202020",
     });
-  } else {
+  }
+  else {
     smoothiebed.removeTimeSeries(chamber_line);
   }
 }
@@ -170,12 +176,14 @@ function get_Temperatures() {
       ? command + " R"
       : command;
   //removeIf(production)
-  var response = "";
+    var response = "";
+
   if (document.getElementById("autocheck_temperature").checked)
     response = "ok T:26.4 /0.0 T1:26.4 /0.0 @0 B:24.9 /0.0 @0 \n";
   else response = "ok T:26.4 /0.0 @0 B:24.9 /0.0 @0\n ";
   process_Temperatures(response);
-  return;
+    return;
+
   //endRemoveIf(production)
   if (target_firmware == "marlin-embedded")
     SendPrinterCommand(command, false, null, null, 105, 1);
@@ -197,75 +205,104 @@ function submit_target_temperature(target, selectedTemp) {
 }
 
 function process_Temperatures(response) {
-  var regex_temp = /(B|C|P|R|T(\d*)):\s*([+]?[0-9]*\.?[0-9]+)? (\/)([+]?[0-9]*\.?[0-9]+)?/gi;
-  var result;
-  var timedata = new Date().getTime();
-  while ((result = regex_temp.exec(response)) !== null) {
-    var tool = result[1];
-    var value = "<span>" + parseFloat(result[3]).toFixed(2).toString() + "°C";
-    var value2;
-    if (isNaN(parseFloat(result[5]))) value2 = "0.00";
-    else value2 = parseFloat(result[5]).toFixed(2).toString();
-    value += "</span>&nbsp;<span>|</span>&nbsp;" + value2 + "°C</span>";
-    //console.log(tool, ":", result[3]);
-    if (tool == "T" || tool == "T0") {
-      //to push to graph
-      extruder_0_line.append(timedata, parseFloat(result[3]));
-      document.getElementById("heaterT0DisplayTemp").innerHTML = value;
-      //to see if heating or not
-      if (Number(value2) > 0)
-        document.getElementById("heaterT0TargetTemp_anime").style.visibility =
-          "visible";
-      else
-        document.getElementById("heaterT0TargetTemp_anime").style.visibility =
-          "hidden";
-    } else if (tool == "R") {
-      extruder_redundant_line.append(timedata, parseFloat(result[3]));
-      document.getElementById("heaterRDisplayTemp").innerHTML = value;
-      if (Number(value2) > 0)
-        document.getElementById("heaterRTargetTemp_anime").style.visibility =
-          "visible";
-      else
-        document.getElementById("heaterRTargetTemp_anime").style.visibility =
-          "hidden";
-    } else if (tool == "T1") {
-      extruder_1_line.append(timedata, parseFloat(result[3]));
-      document.getElementById("heaterT1DisplayTemp").innerHTML = value;
-      if (Number(value2) > 0)
-        document.getElementById("heaterT1TargetTemp_anime").style.visibility =
-          "visible";
-      else
-        document.getElementById("heaterT1TargetTemp_anime").style.visibility =
-          "hidden";
-    } else if (tool == "P") {
-      probe_line.append(timedata, parseFloat(result[3]));
-      document.getElementById("probeDisplayTemp").innerHTML = value;
-      if (Number(value2) > 0)
-        document.getElementById("probeTargetTemp_anime").style.visibility =
-          "visible";
-      else
-        document.getElementById("probeTargetTemp_anime").style.visibility =
-          "hidden";
-    } else if (tool == "B") {
-      bed_line.append(timedata, parseFloat(result[3]));
-      document.getElementById("bedDisplayTemp").innerHTML = value;
-      if (Number(value2) > 0)
-        document.getElementById("bedTargetTemp_anime").style.visibility =
-          "visible";
-      else
-        document.getElementById("bedTargetTemp_anime").style.visibility =
-          "hidden";
-    } else if (tool == "C") {
-      chamber_line.append(timedata, parseFloat(result[3]));
-      document.getElementById("chamberDisplayTemp").innerHTML = value;
-      if (Number(value2) > 0)
-        document.getElementById("chamberTargetTemp_anime").style.visibility =
-          "visible";
-      else
-        document.getElementById("chamberTargetTemp_anime").style.visibility =
-          "hidden";
+    var regex_temp = /(B|C|P|R|T(\d*)):\s*([+]?[0-9]*\.?[0-9]+)? (\/)([+]?[0-9]*\.?[0-9]+)?/gi;
+    var result;
+    var timedata = new Date().getTime();
+    while ((result = regex_temp.exec(response)) !== null) {
+
+        var tool = result[1];
+        var value = "<span>" + parseFloat(result[3]).toFixed(2).toString() + "°C";
+        var value2;
+        if (isNaN(parseFloat(result[5]))) value2 = "0.00";
+        else value2 = parseFloat(result[5]).toFixed(2).toString();
+        value += "</span>&nbsp;<span>|</span>&nbsp;" + value2 + "°C</span>";
+
+        //console.log(tool, ":", result[3]);
+
+        var forAppend_line = undefined;
+        var displayTempId = undefined;
+        var heatingAnimationId = undefined;
+        var tableLine = undefined;
+
+        switch (tool) {
+            case "T":
+            case "T0":
+                forAppend_line = extruder_0_line;
+                displayTempId = "heaterT0DisplayTemp";
+                heatingAnimationId = "heaterT0TargetTemp_anime";
+                break;
+
+            case "R":
+                forAppend_line = extruder_redundant_line;
+                displayTempId = "heaterRDisplayTemp";
+                heatingAnimationId = "heaterRTargetTemp_anime";
+                tableLine = "temperature_redundant";
+                break;
+
+            case "T1":
+                forAppend_line = extruder_1_line;
+                displayTempId = "heaterT1DisplayTemp";
+                heatingAnimationId = "heaterT1TargetTemp_anime";
+                tableLine = "temperature_secondExtruder";
+                break;
+
+            case "P":
+                forAppend_line = probe_line;
+                displayTempId = "probeDisplayTemp";
+                heatingAnimationId = "probeTargetTemp_anime";
+                tableLine = "temperature_probe";
+                break;
+
+            case "B":
+                forAppend_line = bed_line;
+                displayTempId = "bedDisplayTemp";
+                heatingAnimationId = "bedTargetTemp_anime";
+                tableLine = "temperature_bed";
+
+                if (result[3] > 0) {
+                    document.getElementById("bedtemperaturesgraphic").style.display = "block";
+                }
+                else {
+                    document.getElementById("bedtemperaturesgraphic").style.display = "none";
+                }
+
+                break;
+
+            case "C":
+                forAppend_line = chamber_line;
+                displayTempId = "chamberDisplayTemp";
+                heatingAnimationId = "chamberTargetTemp_anime";
+                tableLine = "temperature_chamber";
+                break;
+
+            default:
+                break;
+        }
+        //To push to graph
+        forAppend_line.append(timedata, parseFloat(result[3]));
+        //Temp value set
+        document.getElementById(displayTempId).innerHTML = value;
+
+        //Table line set visibility
+        if (tableLine != undefined)
+            if (result[3] > 0) {
+                document.getElementById(tableLine).style.display = "table-row";
+            }
+            else {
+                document.getElementById(tableLine).style.display = "none";
+            }
+
+        //Heating animation visibility set
+        if (heatingAnimationId != undefined)
+            if (Number(value2) > 0) {
+                document.getElementById(heatingAnimationId).style.visibility =
+                    "visible";
+            }
+            else {
+                document.getElementById(heatingAnimationId).style.visibility =
+                    "hidden";
+            }
     }
-  }
 }
 
 function temperature_heatOff(target) {

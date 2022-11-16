@@ -62,14 +62,14 @@ function init_files_panel(dorefresh) {
         else document.getElementById('files_refresh_btn').style.display = "inline";
         document.getElementById('files_refresh_primary_sd_btn').style.display = "none";
         document.getElementById('files_refresh_secondary_sd_btn').style.display = "none";
-        if(target_firmware == "grbl") {
+        if (target_firmware == "grbl") {
             document.getElementById('files_refresh_printer_sd_btn').style.display = 'none';
             document.getElementById('files_refresh_btn').style.display = 'none';
             document.getElementById('print_upload_btn').style.display = 'none';
             document.getElementById('files_createdir_btn').style.display = "none";
         }
     }
-    if (!((target_firmware == "marlin") || (target_firmware == "???") ||(target_firmware == "grbl"))) document.getElementById('files_createdir_btn').style.display = "inline";
+    if (!((target_firmware == "marlin") || (target_firmware == "???") || (target_firmware == "grbl"))) document.getElementById('files_createdir_btn').style.display = "inline";
     else document.getElementById('files_createdir_btn').style.display = "none";
     files_set_button_as_filter(files_filter_sd_list);
     var refreshlist = true;
@@ -124,9 +124,9 @@ function files_build_file_line(index) {
         if (is_clickable) {
             content += "style='cursor:pointer;' onclick='files_click_file(" + index + ")' ";
         }
-        var size= entry.size;
-        if (entry.isdir)size="";
-        content += ">" +  size + "</div>";
+        var size = entry.size;
+        if (entry.isdir) size = "";
+        content += ">" + size + "</div>";
         content += "<div class='" + timecol + "'";
         if (is_clickable) {
             content += "style='cursor:pointer;' onclick='files_click_file(" + index + ")' ";
@@ -166,7 +166,7 @@ function files_print_filename(filename) {
         cmd = "[ESP220]" + filename;
     } else {
         var newfilename = filename;
-        if ((current_source == tft_sd) || (current_source == tft_usb))newfilename = current_source+filename;
+        if ((current_source == tft_sd) || (current_source == tft_usb)) newfilename = current_source + filename;
         cmd = "M23 " + newfilename + "\nM24";
     }
     if (target_firmware == "grbl-embedded") SendPrinterCommand(cmd);
@@ -231,7 +231,7 @@ function files_delete_file(index) {
             command = "rm " + files_currentPath + files_file_list[index].name;
         } else {
             command = "M30 ";
-            if ((current_source == tft_usb)|| (current_source == tft_sd))command +=current_source;
+            if ((current_source == tft_usb) || (current_source == tft_sd)) command += current_source;
             command += files_currentPath + files_file_list[index].name;
         }
         SendPrinterCommand(command, true, files_proccess_and_update);
@@ -327,13 +327,13 @@ function files_showdeletebutton(index) {
     return true;
 }
 
-function cleanpath(path){
+function cleanpath(path) {
     var p = path;
     p.trim();
-    if (p[0]!='/')p="/"+p;
-    if (p!="/"){
-        if (p.endsWith("/")){
-            p = p .substr(0, p.length - 1);
+    if (p[0] != '/') p = "/" + p;
+    if (p != "/") {
+        if (p.endsWith("/")) {
+            p = p.substr(0, p.length - 1);
         }
     }
     return p;
@@ -343,15 +343,15 @@ function files_refreshFiles(path, usecache) {
     //console.log("refresh requested " + path);
     var cmdpath = path;
     files_currentPath = path;
-    if (current_source != last_source){
+    if (current_source != last_source) {
         files_currentPath = "/";
-        path="/";
+        path = "/";
         last_source = current_source;
     }
-    if ((current_source==tft_sd) || (current_source==tft_usb)){
-     document.getElementById('print_upload_btn').style.display="none";
+    if ((current_source == tft_sd) || (current_source == tft_usb)) {
+        document.getElementById('print_upload_btn').style.display = "none";
     } else {
-     document.getElementById('print_upload_btn').style.display="block";
+        document.getElementById('print_upload_btn').style.display = "block";
     }
     if (typeof usecache === 'undefined') usecache = false;
     document.getElementById('files_currentPath').innerHTML = files_currentPath;
@@ -380,26 +380,26 @@ function files_refreshFiles(path, usecache) {
         } else {
             var command = "M20";
             if (current_source == "SD:") {
-                document.getElementById('fileSource').innerHTML="TFT SD";
-                if (path.endsWith("/")){
+                document.getElementById('fileSource').innerHTML = "TFT SD";
+                if (path.endsWith("/")) {
                     var newpath = path.substring(0, path.length - 1);
-                    path= newpath;
+                    path = newpath;
                 }
-                command="M20 SD:"+ path;
-                
+                command = "M20 SD:" + path;
+
                 usecache = false;
             } else if (current_source == "U:") {
-                document.getElementById('fileSource').innerHTML="TFT USB";
-                if (path.endsWith("/")){
+                document.getElementById('fileSource').innerHTML = "TFT USB";
+                if (path.endsWith("/")) {
                     var newpath = path.substring(0, path.length - 1);
-                    path= newpath;
+                    path = newpath;
                 }
-                command="M20 U:"+ path;
+                command = "M20 U:" + path;
                 usecache = false;
             } else {
                 //Standard M20
                 current_source = "/";
-                document.getElementById('fileSource').innerHTML=translate_text_item("SD Files");
+                document.getElementById('fileSource').innerHTML = translate_text_item("SD Files");
             }
             //to avoid to query when we already have the list
             if (usecache) {
@@ -437,9 +437,9 @@ function files_serial_M20_list_display() {
     for (var i = 0; i < files_file_list_cache.length; i++) {
         //console.log("processing " + files_file_list_cache[i].name)
         var file_name = files_file_list_cache[i].name;
-        if (file_name.startsWith(path) || (current_source == tft_usb)|| (current_source == tft_sd)) {
+        if (file_name.startsWith(path) || (current_source == tft_usb) || (current_source == tft_sd)) {
             //console.log("need display " + file_name)
-            if (!((current_source == tft_usb)|| (current_source == tft_sd)))file_name = file_name.substring(path.length);
+            if (!((current_source == tft_usb) || (current_source == tft_sd))) file_name = file_name.substring(path.length);
             //console.log ("file name is :" + file_name)
             if (file_name.length > 0) {
                 var endpos = file_name.indexOf("/");
@@ -486,7 +486,7 @@ function files_serial_M20_list_success(response_text) {
         var fsize = "";
         var d = "";
         line = line.replace("\r", "");
-        if (!((line.length == 0) || (line.indexOf("egin file list") > 0) || (line.indexOf("nd file list") > 0) || (line.startsWith("ok ") > 0)|| (line.indexOf(":") > 0) || (line == "ok")  || (line == "wait"))) {
+        if (!((line.length == 0) || (line.indexOf("egin file list") > 0) || (line.indexOf("nd file list") > 0) || (line.startsWith("ok ") > 0) || (line.indexOf(":") > 0) || (line == "ok") || (line == "wait"))) {
             //for marlin
             if (line.startsWith("/")) {
                 line = line.substring(1);
@@ -546,7 +546,7 @@ function files_serial_ls_list_success(response_text) {
         var file_name = "";
         var fsize = "";
         var d = ""
-        var command = "ls -s " +  cleanpath(files_currentPath);
+        var command = "ls -s " + cleanpath(files_currentPath);
         if (line == command) continue;
         if (line.length != 0) {
             if (line.endsWith("/")) {
@@ -631,11 +631,11 @@ function files_directSD_list_success(response_text) {
 
 function files_serial_M20_list_failed(error_code, response) {
     document.getElementById('files_navigation_buttons').style.display = "block";
-    if (esp_error_code !=0){
-         alertdlg (translate_text_item("Error") + " (" + esp_error_code + ")", esp_error_message);
-         esp_error_code = 0;
+    if (esp_error_code != 0) {
+        alertdlg(translate_text_item("Error") + " (" + esp_error_code + ")", esp_error_message);
+        esp_error_code = 0;
     } else {
-        alertdlg (translate_text_item("Error"), translate_text_item("No connection"));
+        alertdlg(translate_text_item("Error"), translate_text_item("No connection"));
     }
     files_build_display_filelist(false);
 }
@@ -683,7 +683,7 @@ function files_build_display_filelist(displaylist) {
         content += "<span >" + get_icon_svg("level-up") + "</span>&nbsp;&nbsp;<span translate>Up...</span>";
         content += "</li>";
     }
-    files_file_list.sort(function(a, b) {
+    files_file_list.sort(function (a, b) {
         return compareStrings(a.name, b.name);
     });
     for (var index = 0; index < files_file_list.length; index++) {
@@ -751,23 +751,12 @@ function files_select_upload() {
 function files_check_if_upload() {
     var canupload = true;
     var files = document.getElementById("files_input_file").files;
+
+    //Check for 8.3 filenames
     if (target_firmware == "marlin" && !direct_sd) {
-        for (var i = 0; i < files.length; i++) {
-            var filename = files[i].name;
-            //check base name can only by 8
-            var sizename = filename.indexOf(".");
-            if (sizename == -1) sizename = filename.length;
-            if (sizename > 8) canupload = false;
-            //check extension cano be more than 4 ".xxx"
-            if ((filename.length - sizename) > 4) canupload = false;
-            //check only one dot
-            if (filename.indexOf(".") != filename.lastIndexOf(".")) canupload = false;
-        }
-        if (canupload == false) {
-            alertdlg(translate_text_item("Error"), translate_text_item("Please use 8.3 filename only."));
-            return;
-        }
+        check_for_8_3(files);
     }
+
     if (direct_sd && !(target_firmware == "smoothieware" && files_currentPath.startsWith(secondary_sd))) {
         SendPrinterCommand("[ESP200]", false, process_check_sd_presence);
     } else {
@@ -775,10 +764,46 @@ function files_check_if_upload() {
         if (target_firmware == "smoothieware") {
             var cmd = "ls " + cleanpath(files_currentPath);
             SendPrinterCommand(cmd, false, process_check_sd_presence);
-        } else { //no reliable way to know SD is present or not so let's upload
+        }
+        else { //no reliable way to know SD is present or not so let's upload
             files_start_upload();
         }
     }
+}
+
+//Check for 8.3 filenames
+function check_for_8_3(files) {
+    for (var i = 0; i < files.length; i++) {
+
+        var filename = files[i].name;
+       
+        if(filename.indexOf(".") < 0) {
+            filename += ".GCO";
+        }
+
+        if (filename.indexOf(".") != filename.lastIndexOf(".")
+            || filename.indexOf(".") > 8
+            || filename.split(".")[1].length > 4) {
+
+            //Change name
+            var newName = filename.slice(0, filename.indexOf(".") > 8 ? 8 : filename.indexOf("."));
+
+            //Change ext
+            var newExt = filename.slice(filename.lastIndexOf("."), filename.length);
+            if(newExt.length > 4) newExt = newExt.slice(0, 4);
+
+            //Show alert
+            alertdlg(translate_text_item("Attention"),
+                translate_text_item("File renamed with 8.3 filename convention: ") + (newName + newExt));
+
+            //Rename file
+            Object.defineProperty(files[i], 'name', {
+                writable: true,
+                value: (newName + newExt)
+            });
+        }
+    }
+
 }
 
 function process_check_sd_presence(answer) {
@@ -807,6 +832,7 @@ function process_check_sd_presence(answer) {
 }
 
 function files_start_upload() {
+
     if (http_communication_locked) {
         alertdlg(translate_text_item("Busy..."), translate_text_item("Communications are currently locked, please wait and retry."));
         console.log("communication locked");
@@ -834,14 +860,18 @@ function files_start_upload() {
     var formData = new FormData();
 
     formData.append('path', path);
+
     for (var i = 0; i < files.length; i++) {
         var file = files[i];
+        console.log("Upload file: " + file.name);
+
         var arg = path + file.name + "S";
         //append file size first to check updload is complete
         formData.append(arg, file.size);
         formData.append('myfile[]', file, path + file.name);
         //console.log( path +file.name);
     }
+
     files_error_status = "Upload " + file.name;
     document.getElementById('files_currentUpload_msg').innerHTML = file.name;
     document.getElementById('files_uploading_msg').style.display = "block";
