@@ -11,3 +11,10 @@ My printer <b>Ender3/4.2.2/Marlin.</b><br/>
 If someone is interested in how I connected esp-01, then write, I will try to write my experience in the instructions
 
 <h3>The original repo available at <a href="https://github.com/luc-github/ESP3D-WEBUI">here</a></h3><br/>
+
+<ul>
+  <li>
+  To transfer files over the air, you need to comment out the line:<br/>
+    <code>//#define SDCARD_READONLY                   // Read-only SD card (to save over 2K of flash)</code>
+  </li>
+</ul>
