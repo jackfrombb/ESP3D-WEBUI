@@ -14,7 +14,7 @@ If someone is interested in how I connected esp-01, then write, I will try to wr
 
 <ul>
   <li>
-  To transfer files over the air, you need to comment out the line:<br/>
+  To transfer files over the air, you need to comment out the line in Configuration_adv:<br/>
     <code>//#define SDCARD_READONLY                   // Read-only SD card (to save over 2K of flash)</code>
   </li>
 </ul>
