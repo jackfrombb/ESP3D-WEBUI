@@ -12,9 +12,11 @@ If someone is interested in how I connected esp-01, then write, I will try to wr
 
 <h3>The original repo available at <a href="https://github.com/luc-github/ESP3D-WEBUI">here</a></h3><br/>
 
+<h1>Notes:</h1>
 <ul>
   <li>
   To transfer files over the air, you need to comment out the line in Configuration_adv:<br/>
-    <code>//#define SDCARD_READONLY                   // Read-only SD card (to save over 2K of flash)</code>
+    <code>//#define SDCARD_READONLY                   // Read-only SD card (to save over 2K of flash)</code><br/>
+    In stock, this has already been done
   </li>
 </ul>
