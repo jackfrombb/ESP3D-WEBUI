@@ -1,0 +1,102 @@
+#navbar-root {
+    max-width: 100%;
+    display: grid;
+}
+
+.navbar-brand-root {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.navbar-tabbar-root {
+    float: left;
+    display: flex;
+    align-items: center;
+    overflow: auto;
+    max-width: 100%;
+
+}
+
+/* Disable scrollbar visibility Chrome, Safari */
+.navbar-tabbar-root::-webkit-scrollbar { width: 0; }
+/*  Disable scrollbar visibility ie 10+ */
+.navbar-tabbar-root { -ms-overflow-style: none; }
+
+
+.navbar-menu-root {
+    margin-right: 20px;
+}
+
+.navbar-other-root {
+    display: none;
+}
+
+@media screen and (min-width: 768px) {
+    #navbar-root {
+        grid-template-columns: 250px auto min-content;
+    }
+}
+
+@media screen and (min-width: 421px) and (max-width: 768px) {
+
+    .navbar-brand-root {
+        grid-area: A;
+    }
+
+    .navbar-tabbar-root {
+        grid-area: B;
+    }
+
+    .navbar-menu-root {
+        grid-area: C;
+        text-align: end;
+    }
+
+    .navbar-other-root {
+        grid-area: D;
+    }
+
+    #navbar-root {
+        justify-content: space-between;
+
+        grid-template-areas:
+			"A A A A"
+			"B B B C"
+			"D D D D";
+    }
+}
+
+@media screen and (min-width: 320px) and (max-width: 420px) {
+    .navbar-brand-root {
+        grid-area: B;
+    }
+
+    .navbar-tabbar-root {
+        grid-area: C;
+    }
+
+    .navbar-menu-root {
+        grid-area: A;
+    }
+
+    .navbar-other-root {
+        grid-area: D;
+    }
+
+    #navbar-root {
+        grid-template-areas:
+			"A B B B"
+			"C C C C"
+			"D D D D";
+    }
+}
+
+@media screen and (max-width: 320px) {
+
+    .tab button {
+        margin: 0 !important;
+    }
+}

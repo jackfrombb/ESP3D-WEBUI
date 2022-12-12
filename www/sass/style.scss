@@ -1,0 +1,72 @@
+@import "mixins";
+
+/** Reset some styles */
+body {
+  button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 0;
+  }
+}
+
+/** Switcher for Dark and light theme */
+body {
+  width: 100%;
+  min-width: 320px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-size: calcFluidFontSize(12, 16, 280, 1280); //14px
+  font-family: "Arial", sans-serif;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  .switcher {
+    @include flex_center_content();
+    color: var(--color-main-background);
+    padding-top: 10px;
+
+    #theme-switcher {
+      @include flex_center_content(true);
+      position: relative;
+      cursor: pointer;
+      width: 5em;
+      min-height: 1.5em;
+      background-color:  var(--color-theme-switcher-back);
+      border-radius: 15px;
+      overflow: hidden;
+
+      span {
+        position: absolute;
+      }
+
+      .light:before {
+        content: "🔆";
+      }
+
+      .dark:before {
+        content: "🌙";
+      }
+
+      &[theme=light] .light {
+        transform: translateY(0);
+        transition: transform 0.3s;
+      }
+      &[theme=dark] .light {
+        transition-delay: 0.3s;
+        transform: translateY(110%);
+        transition: transform 0.3s;
+      }
+      &[theme=dark] .dark {
+        transform: translateY(0);
+        transition: transform 0.3s;
+      }
+      &[theme=light] .dark {
+        transition-delay: 0.3s;
+        transform: translateY(110%);
+        transition: transform 0.3s;
+      }
+    }
+  }
+}

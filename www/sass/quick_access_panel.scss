@@ -1,0 +1,47 @@
+#quick_access {
+  position: relative;
+  min-height: 40vh;
+}
+
+.sliding-menu {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+  top: 0;
+  right: 0;
+  width: auto;
+  height: 100%;
+  overflow: hidden;
+  transform-origin: 98% 5px;
+  transform: scale(0);
+  background-color: white;
+  transition: transform .3s;
+  padding-top: 10%;
+  padding-left: 5%;
+  padding-right: 5%;
+  border-radius: 15px;
+  color: black;
+  z-index: var(--value-menu-z-index);
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+
+    input {
+      display: block;
+    }
+  }
+
+  #custom_command_submit {
+    position: absolute;
+    bottom: 15px;
+  }
+
+  &.opened {
+    transform: scale(1);
+    transition: transform .3s;
+  }
+
+  div {
+  }
+}

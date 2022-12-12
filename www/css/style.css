@@ -1,6 +1,122 @@
+/* Values */
+:root {
+    --value-border-radius: 6px;
+    --value-close-layout-z-index: 1;
+    --value-open-btns-z-index: 3;
+    --value-menu-z-index: 2;
+    --value-open-animation-time: 0.5s;
+    --value-middle-font: 20px;
+}
+
+/*Colors. Dark theme is default*/
+:root {
+    /*Main*/
+    --color-main-background: black;
+    --color-main-text: white;
+
+    --color-blue: #337AB7;
+    --color-light-blue: #8bc9ff;
+    --color-dark-blue: #001b33;
+    --color-silver-transparent: rgba(192, 192, 192, 0.35);
+    --color-silver-light: hsl(0deg , 0%, 78%);
+    --color-silver: #555555;
+    --color-red: hsl(0deg, 22%, 50%);
+
+    --color-close-background: var(--color-silver-transparent);
+
+    /*Nav*/
+    --color-tab-text-inactive: var(--color-blue);
+    --color-tab-text-hover: var(--color-light-blue);
+    --color-tab-text-active: #555555;
+
+    --color-tab-inactive: #0e0e0e;
+    --color-tab-hover: #343434;
+    --color-tab-active: #ffffff;
+
+    --color-dropbtn: var(--color-blue);
+    --color-dropbtn-hover: var(--color-light-blue);
+    --color-dropbtn-background: var(--color-tab-hover);
+
+    --color-menu-text: #0e0e0e;
+    --color-menu-back: #f8f8f8;
+
+    --color-theme-switcher-back: var(--color-tab-inactive);
+
+    /* Current job status */
+    --color-percent-border: var(--color-silver);
+    --color-percent-line:  var(--color-silver-light);
+}
+
+:root[theme=light] {
+    /*Main*/
+    --color-main-background: white;
+    --color-main-text: black;
+
+    /*Nav*/
+    --color-tab-text-inactive: #0e0e0e;
+    --color-tab-text-hover: var(--color-dark-blue);
+    --color-tab-text-active: white;
+
+    --color-tab-inactive: #f0f0f0;
+    --color-tab-hover: var(--color-light-blue);
+    --color-tab-active: var(--color-blue);
+
+    --color-dropbtn: var(--color-blue);
+    --color-dropbtn-background: var(--color-tab-inactive);
+
+    --color-theme-switcher-back: var(--color-light-blue);
+}
+
 body {
-    font-family: "Arial", sans-serif;
-    font-size: 14px;
+    background-color: var(--color-main-background);
+    color: var(--color-main-text);
+}
+
+
+.hide_it {
+    display: none;
+}
+
+.not_visible {
+    visibility: hidden;
+}
+
+.no_margin {
+    margin: 0 !important;
+    line-height: 0;
+}
+
+#main_ui {
+    width: 100%;
+}
+
+#loadingmsg{
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+    text-align: center;
+    padding: 49vh 0;
+}
+
+.close_layout {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: var(--value-close-layout-z-index);
+    background-color: var(--color-close-background);
+
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility var(--value-open-animation-time), opacity var(--value-open-animation-time) linear;
+}
+
+.close_layout.opened {
+    visibility: visible;
+    opacity: 1;
 }
 
 .form_control {
@@ -12,6 +128,7 @@ body {
     overflow: hidden;
     white-space: nowrap;
 }
+
 .input-min {
     min-width: 8em;
 }
@@ -28,29 +145,16 @@ body {
     white-space: nowrap;
 }
 
-.hide_it {
-    display: none;
-}
-
-.not_visible {
-    visibility: hidden;
-}
-
-.no_margin {
-    margin: 0 !important;
-    line-height: 0;
-}
-
 .noshowonlowrestab {}
 
 .btn-svg {
-    padding: 4px 0px 0px 0px !important;
+    padding: 4px 0 0 0 !important;
     width: 34px !important;
     height: 34px !important;
 }
 
 .btn-svg-no_pad {
-    padding: 0px 0px 0px 0px !important;
+    padding: 0 0 0 0 !important;
     height: 34px !important;
 }
 
@@ -249,22 +353,6 @@ w25 {
 }
 
 @media (max-width: 360px) {
-    .container-fluid {
-        min-width: 350px;
-        margin-left: -10px;
-        margin-right: -10px;
-    }
-
-    .panel {
-        margin-left: -17px;
-        margin-right: -13px;
-    }
-
-    .pull-left,
-    .pull-right {
-        float: unset !important;
-    }
-
     noshowonlowrestab,
     .noshowonlowres {
         display: none;
@@ -272,17 +360,6 @@ w25 {
 }
 
 @media (min-width: 361px) and (max-width: 640px) {
-    .container-fluid {
-        min-width: 350px;
-        margin-left: -10px;
-        margin-right: -10px;
-    }
-
-    .panel {
-        margin-left: -17px;
-        margin-right: -13px;
-    }
-
     noshowonlowrestab,
     .noshowonlowres {
         display: none;
@@ -297,7 +374,6 @@ w25 {
 }
 
 .position-container {
-    margin-left: -10px;
     display: inline-grid;
     grid-gap: 10px;
     padding: 10px;
@@ -361,7 +437,6 @@ w25 {
     }
 }
 
-
 @media (min-width: 800px) and (max-width: 1350px){
     .fixedbutton {
         width: 6em !important;
@@ -399,9 +474,7 @@ w25 {
 }
 
 @media (min-width: 641px) {
-    .container-fluid {
-        min-width: 350px;
-    }
+
 
 }
 
@@ -414,13 +487,10 @@ w25 {
     text-decoration: none;
     font-style: normal;
     font-variant: small-caps slashed-zero;
-    ;
     text-transform: none;
 }
 
 .td_center {
-    align: center;
-    valign: middle;
     text-align: center;
 }
 

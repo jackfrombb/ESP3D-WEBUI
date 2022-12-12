@@ -2,7 +2,8 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     gulpif = require('gulp-if'),
     concat = require('gulp-concat'),
-    uglify = require('gulp-uglify'),
+    uglify = require('gulp-uglify-es').default,
+    sass = require('gulp-sass')(require('sass')),
     cleanCSS = require('gulp-clean-css'),
     removeCode = require('gulp-remove-code'),
     merge = require('merge-stream'),
@@ -12,6 +13,7 @@ var gulp = require('gulp'),
     htmlmin = require('gulp-htmlmin'),
     replace = require('gulp-replace'),
     fs = require('fs'),
+    htmlreplace = require('gulp-html-replace'),
     smoosher = require('gulp-smoosher');
     size = require('gulp-filesize');
 
@@ -32,7 +34,6 @@ var zh_tw_lang = false;
 
 function clean() {
     return del(['dist']);
-    
 }
 
 function clean2() {
@@ -68,13 +69,17 @@ function Copy() {
 
 function concatApptest() {
     return merge(
-        gulp.src([ 'www/js/**/*.js'])
+        gulp.src(['www/js/**/*.js'])
             .pipe(concat('app.js'))
             .pipe(removeCode({production: false}))
             .pipe(removeCode({cleanheader: true}))
             .pipe(gulp.dest('./dist/js')),
 
-        gulp.src([ 'www/css/**/*.css'])
+        //Concat scss with css
+        merge(
+            gulp.src('www/sass/**/*.scss').pipe(sass.sync().on("error", sass.logError)),
+            gulp.src(['www/css/**/*.css']))
+
             .pipe(concat('style.css'))
             .pipe(gulp.dest('./dist/css/'))
     )
@@ -82,13 +87,17 @@ function concatApptest() {
 
 function concatApp() {
     return merge(
-        gulp.src([ 'www/js/**/*.js'])
+        gulp.src(['www/js/**/*.js'])
             .pipe(concat('app.js'))
             .pipe(removeCode({production: true}))
             .pipe(removeCode({cleanheader: true}))
             .pipe(gulp.dest('./dist/js')),
 
-        gulp.src([ 'www/css/**/*.css'])
+        //Concat scss with css
+        merge(
+            gulp.src('www/sass/**/*.scss').pipe(sass.sync({outputStyle: 'compressed'}).on("error", sass.logError)),
+            gulp.src(['www/css/**/*.css']))
+
             .pipe(concat('style.css'))
             .pipe(gulp.dest('./dist/css/'))
     )
@@ -308,6 +317,11 @@ function compress() {
         .pipe(size());
 }
 
+function removeBuild() {
+    return gulp.src('dist/index.html')
+        .pipe(htmlreplace({ remove: '' }))
+        .pipe(gulp.dest('dist'));
+}
 
 gulp.task(clean);
 gulp.task(lint);
@@ -319,13 +333,14 @@ gulp.task(concatApptest);
 gulp.task(minifyApp);
 gulp.task(smoosh);
 gulp.task(clean2);
-gulp.task(clearlang)
+gulp.task(clearlang);
+gulp.task(removeBuild);
 
 var defaultSeries = gulp.series(clean,  lint, Copy, concatApp, minifyApp, includehtml, includehtml, smoosh);
 //var packageSeries = gulp.series(clean,  lint, Copy, concatApp, minifyApp, smoosh, compress);
-var packageSeries = gulp.series(clean,  lint, Copy, concatApp, includehtml, includehtml, replaceSVG, clearlang, minifyApp, smoosh, compress, clean2);
-var package2Series = gulp.series(clean,  lint, Copy, concatApp, includehtml, includehtml, replaceSVG, smoosh);
-var package2testSeries = gulp.series(clean,  lint, Copytest, concatApptest, includehtml, includehtml, replaceSVG, smoosh);
+var packageSeries = gulp.series(clean,  lint, Copy, concatApp, includehtml, includehtml, replaceSVG, removeBuild, clearlang, minifyApp, smoosh, compress, clean2);
+var package2Series = gulp.series(clean, lint, Copy, concatApp, includehtml, includehtml, replaceSVG, smoosh);
+var package2testSeries = gulp.series(clean, lint, Copytest, concatApptest, includehtml, includehtml, replaceSVG, removeBuild, smoosh);
 
 gulp.task('default', defaultSeries);
 gulp.task('package', packageSeries);

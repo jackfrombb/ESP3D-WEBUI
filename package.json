@@ -10,25 +10,29 @@
     "gulp-cdnizer": "latest",
     "gulp-clean-css": "latest",
     "gulp-concat": "latest",
-    "gulp-filesize": "latest",
+    "gulp-filesize": "^0.0.6",
     "gulp-gzip": "latest",
+    "gulp-html-replace": "^1.6.2",
     "gulp-htmlmin": "latest",
     "gulp-if": "latest",
     "gulp-jshint": "latest",
     "gulp-ng-annotate": "latest",
     "gulp-remove-code": "latest",
     "gulp-replace": "latest",
+    "gulp-sass": "^5.1.0",
     "gulp-smoosher": "latest",
-    "gulp-uglify": "latest",
+    "gulp-uglify": "^3.0.2",
     "gulp-zip": "latest",
     "jshint": "latest",
-    "merge-stream": "latest"
+    "merge-stream": "latest",
+    "sass": "^1.56.1"
   },
   "repository": "https://github.com/luc-github/ESP3D-WEBUI",
   "author": "Luc LEBOSSE",
   "license": "(ISC OR GPL-3.0)",
   "dependencies": {
     "global": "latest",
-    "gulp-cli": "^2.3.0"
+    "gulp-cli": "^2.3.0",
+    "merge2": "^1.4.1"
   }
 }

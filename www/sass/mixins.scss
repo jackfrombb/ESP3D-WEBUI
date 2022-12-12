@@ -1,0 +1,16 @@
+@mixin flex_center_content ($is_align_center: false) {
+  display: flex;
+  justify-content: space-evenly;
+  @if($is_align_center) {
+    align-items: center;
+  }
+}
+
+@function calcFluidFontSize($f-min, $f-max, $v-min, $v-max) {
+  $k: calc(($f-max - $f-min)/($v-max - $v-min));
+  $b: $f-min - $k * $v-min;
+
+  $b: $b * 1px;
+
+  @return calc( #{$k} * 100vw + #{$b} );
+}

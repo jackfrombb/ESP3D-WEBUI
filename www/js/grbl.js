@@ -1,3 +1,60 @@
+//Grbl is a no-compromise, high performance, low-cost alternative
+// to parallel-port-based motion control for CNC milling.
+// It will run on a vanilla Arduino (Duemillanove/Uno) as long as it sports an Atmega 328.
+
+/**
+ * grbl panel in dash
+ */
+const GRBL_PANEL = {};
+GRBL_PANEL.setVisibility = (visible) => {
+    setVisibility("grblPanel", visible);
+}
+GRBL_PANEL.openControlTab = () => {
+    if (typeof document.getElementById("grblcontroltablink") !== "undefined") {
+        document.getElementById("grblcontroltablink").click();
+    }
+}
+GRBL_PANEL.controlSet = (grblaxis) => {
+
+    document.getElementById("zero_xyz_btn").style.display = "block";
+    document.getElementById("zero_x_btn").style.display = "block";
+    document.getElementById("zero_y_btn").style.display = "block";
+
+    if (grblaxis > 2) {
+        //document.getElementById('control_z_position_display').style.display = 'block';
+        document.getElementById("control_z_position_label").innerHTML = "Zw";
+        document.getElementById("zero_xyz_btn_txt").innerHTML += "Z";
+        grblzerocmd += " Z0";
+    }
+    else {
+        CONTROL_PANEL.setAxisControlsVisibility(false);//hideAxiscontrols();
+        document.getElementById("preferences_control_z_velocity_group").style.display = "none";
+    }
+
+    if (grblaxis > 3) {
+        document.getElementById("zero_xyz_btn_txt").innerHTML += "A";
+        grblzerocmd += " A0";
+        buildAxisSelection();
+        document.getElementById("preferences_control_a_velocity_group").style.display = "block";
+        document.getElementById("positions_labels2").style.display = "inline-grid";
+        document.getElementById("control_a_position_display").style.display = "block";
+    }
+    if (grblaxis > 4) {
+        document.getElementById("control_b_position_display").style.display = "block";
+        document.getElementById("zero_xyz_btn_txt").innerHTML += "B";
+        grblzerocmd += " B0";
+        document.getElementById("preferences_control_b_velocity_group").style.display = "block";
+    }
+    if (grblaxis > 5) {
+        document.getElementById("control_c_position_display").style.display = "block";
+        document.getElementById("zero_xyz_btn_txt").innerHTML += "C";
+        document.getElementById("preferences_control_c_velocity_group").style.display = "block";
+    }
+    else {
+        document.getElementById("control_c_position_display").style.display = "none";
+    }
+}
+
 var interval_status = -1;
 var probe_progress_status = 0;
 var surface_progress_status = 0;
@@ -17,33 +74,37 @@ var axis_B_feedrate = 0;
 var axis_C_feedrate = 0;
 var last_axis_letter = "Z";
 
-function build_axis_selection(){
-    var html = "<select class='form-control wauto' id='control_select_axis' onchange='control_changeaxis()' >";
+function buildAxisSelection(){
+    var html = "<select class='form-control wauto' id='control_select_axis' onchange='controlChangeAxis()' >";
     for (var i = 3; i <= grblaxis; i++) {
         var letter;
+
         if (i == 3) letter = "Z";
         else if (i == 4) letter = "A";
         else if (i == 5) letter = "B";
         else if (i == 6) letter = "C";
         html += "<option value='" + letter + "'";
+
         if (i == 3) html += " selected ";
         html += ">";
         html += letter;
         html += "</option>\n";
     }
     html += "</select>\n";
+
    if(grblaxis > 3) {
        document.getElementById('axis_selection').innerHTML = html;
-       document.getElementById('axis_label').innerHTML = translate_text_item("Axis") + ":";
+       document.getElementById('axis_label').innerHTML = translateTextItem("Axis") + ":";
        document.getElementById('axis_selection').style.display = "table-row"
    }
 }
 
-function control_changeaxis(){
+function controlChangeAxis(){
     var letter = document.getElementById('control_select_axis').value;
     document.getElementById('axisup').innerHTML = '+'+letter;
     document.getElementById('axisdown').innerHTML = '-'+letter;
     document.getElementById('homeZlabel').innerHTML = ' '+letter+' ';
+
     switch(last_axis_letter) {
         case "Z":
             axis_Z_feedrate = document.getElementById('control_z_velocity').value;
@@ -76,74 +137,77 @@ function control_changeaxis(){
     }
 }
 
-function init_grbl_panel() {
-    grbl_set_probe_detected(false);
-    if (target_firmware == "grbl-embedded") {
-        on_autocheck_status(true);
+function initGrblPanel() {
+    grblSetProbeDetected(false);
+    if (target_firmware === "grbl-embedded") {
+        onAutocheckStatus(true);
     }
 }
 
-function grbl_clear_status() {
-    grbl_set_probe_detected(false);
+function grblClearStatus() {
+    grblSetProbeDetected(false);
     grbl_error_msg = "";
     document.getElementById('grbl_status_text').innerHTML = grbl_error_msg;
     document.getElementById('grbl_status').innerHTML = "";
 }
 
-function grbl_set_probe_detected(state) {
+function grblSetProbeDetected(state) {
     if (state) {
-        document.getElementById('touch_status_icon').innerHTML = get_icon_svg("ok-circle", "1.3em", "1.2em", "green");
+        document.getElementById('touch_status_icon').innerHTML = getIconSvg("ok-circle", "1.3em", "1.2em", "green");
     } else {
-        document.getElementById('touch_status_icon').innerHTML = get_icon_svg("record", "1.3em", "1.2em", "grey");
+        document.getElementById('touch_status_icon').innerHTML = getIconSvg("record", "1.3em", "1.2em", "grey");
     }
 }
 
-function onprobemaxtravelChange() {
+function onProbeMaxTravelChange() {
     var travel = parseFloat(document.getElementById('probemaxtravel').value);
     if (travel > 9999 || travel <= 0 || isNaN(travel) || (travel === null)) {
-        alertdlg(translate_text_item("Out of range"), translate_text_item("Value of maximum probe travel must be between 1 mm and 9999 mm !"));
+        alertdlg(translateTextItem("Out of range"), translateTextItem("Value of maximum probe travel must be between 1 mm and 9999 mm !"));
         return false;
     }
     return true;
 }
 
-function onprobefeedrateChange() {
+function onProbeFeedrateChange() {
     var feedratevalue = parseInt(document.getElementById('probefeedrate').value);
     if (feedratevalue <= 0 || feedratevalue > 9999 || isNaN(feedratevalue) || (feedratevalue === null)) {
-        alertdlg(translate_text_item("Out of range"), translate_text_item("Value of probe feedrate must be between 1 mm/min and 9999 mm/min !"));
+        alertdlg(translateTextItem("Out of range"), translateTextItem("Value of probe feedrate must be between 1 mm/min and 9999 mm/min !"));
         return false
     }
     return true
 }
 
-function onprobetouchplatethicknessChange() {
+function onProbeTouchplateThicknessChange() {
     var thickness = parseFloat(document.getElementById('probetouchplatethickness').value);
     if (thickness <= 0 || thickness > 999 || isNaN(thickness) || (thickness === null)) {
-        alertdlg(translate_text_item("Out of range"), translate_text_item("Value of probe touch plate thickness must be between 0 mm and 9999 mm !"));
+        alertdlg(translateTextItem("Out of range"), translateTextItem("Value of probe touch plate thickness must be between 0 mm and 9999 mm !"));
         return false;
     }
     return true;
 }
 
-function onsurfacewidthChange() {
+/* NOT IN USE
+function onSurfaceWidthChange() {
     var travel = parseFloat(document.getElementById('surfacewidth').value);
     if (travel > 9999 || travel <= 0 || isNaN(travel) || (travel === null)) {
-        alertdlg(translate_text_item("Out of range"), translate_text_item("Value of surface width must be between 1 mm and 9999 mm !"));
+        alertdlg(translateTextItem("Out of range"), translateTextItem("Value of surface width must be between 1 mm and 9999 mm !"));
         return false;
     }
     return true;
-}
+}*/
 
-function onsurfacelengthChange() {
+/* NOT IN USE
+function onSurfaceLengthChange() {
     var travel = parseFloat(document.getElementById('surfacelength').value);
     if (travel > 9999 || travel <= 0 || isNaN(travel) || (travel === null)) {
-        alertdlg(translate_text_item("Out of range"), translate_text_item("Value of surface length must be between 1 mm and 9999 mm !"));
+        alertdlg(translateTextItem("Out of range"), translateTextItem("Value of surface length must be between 1 mm and 9999 mm !"));
         return false;
     }
     return true;
 }
+ */
 
-function on_autocheck_status(use_value) {
+function onAutocheckStatus(use_value) {
     if (probe_progress_status != 0) {
         document.getElementById('autocheck_status').checked = true;
         return;
@@ -154,7 +218,7 @@ function on_autocheck_status(use_value) {
         if (!isNaN(interval) && interval > 0 && interval < 100) {
             if (interval_status != -1) clearInterval(interval_status);
             interval_status = setInterval(function() {
-                get_status()
+                getStatus()
             }, interval * 1000);
         } else {
             document.getElementById('autocheck_status').checked = false;
@@ -168,88 +232,106 @@ function on_autocheck_status(use_value) {
     }
 
     if (document.getElementById('autocheck_status').checked == false) {
-        grbl_clear_status();
+        grblClearStatus();
     }
 }
 
-function onstatusIntervalChange() {
+function onStatusIntervalChange() {
     var interval = parseInt(document.getElementById('statusInterval_check').value);
     if (!isNaN(interval) && interval > 0 && interval < 100) {
-        on_autocheck_status();
+        onAutocheckStatus();
     } else {
         document.getElementById('autocheck_status').checked = false;
         document.getElementById('statusInterval_check').value = 0;
-        if (interval != 0) alertdlg(translate_text_item("Out of range"), translate_text_item("Value of auto-check must be between 0s and 99s !!"));
-        on_autocheck_status();
+        if (interval != 0) alertdlg(translateTextItem("Out of range"), translateTextItem("Value of auto-check must be between 0s and 99s !!"));
+        onAutocheckStatus();
     }
 }
 
 //TODO handle authentication issues
 //errorfn cannot be NULL
-function get_status() {
+function getStatus() {
     var command = "?";
     if ((target_firmware == "grbl") || (target_firmware == "grbl-embedded")) command = "?";
     //ID 114 is same as M114 as '?' cannot be an ID
-    if (target_firmware == "grbl")SendPrinterSilentCommand(command, null, null, 114, 1);
-    else SendPrinterCommand(command, false, null, null, 114, 1);
+    if (target_firmware == "grbl")sendPrinterSilentCommand(command, null, null, 114, 1);
+    else sendPrinterCommand(command, false, null, null, 114, 1);
 }
 
-function process_grbl_position(response) {
+function processGrblPosition(response) {
     var tab1 = response.split("WCO:");
     if (tab1.length > 1) {
         var tab2 = tab1[1].split("|");
         var tab1 = tab2[0].split(">");
         var tab3 = tab1[0].split(",");
+
         WCOx = parseFloat(tab3[0]);
         if (tab3.length > 1) {
             WCOy = parseFloat(tab3[1]);
-        } else {
+        }
+        else {
             WCOy = 0;
         }
+
         if ((tab3.length > 2) && (grblaxis > 2)) {
             WCOz = parseFloat(tab3[2]);
-        } else {
+        }
+        else {
             WCOz = 0;
         }
-         if ((tab3.length > 3) && (grblaxis > 3)) {
+
+        if ((tab3.length > 3) && (grblaxis > 3)) {
             WCOa = parseFloat(tab3[3]);
         } else {
             WCOa = 0;
         }
-         if ((tab3.length > 4) && (grblaxis > 4)){
+
+        if ((tab3.length > 4) && (grblaxis > 4)){
             WCOb = parseFloat(tab3[4]);
-        } else {
+        }
+        else {
             WCOb = 0;
         }
-         if ((tab3.length > 5) && (grblaxis > 5)) {
+
+        if ((tab3.length > 5) && (grblaxis > 5)) {
             WCOc = parseFloat(tab3[5]);
-        } else {
+        }
+        else {
             WCOc = 0;
         }
+
         gotWCO = true;
     }
     tab1 = response.split("WPos:");
     if (tab1.length > 1) {
         var tab2 = tab1[1].split("|");
         var tab3 = tab2[0].split(",");
+
         document.getElementById('control_x_position').innerHTML = tab3[0];
-        if (gotWCO) document.getElementById('control_xm_position').innerHTML = (WCOx + parseFloat(tab3[0])).toFixed(3);
+
+        if (gotWCO)
+            document.getElementById('control_xm_position').innerHTML = (WCOx + parseFloat(tab3[0])).toFixed(3);
+
         if (tab3.length > 1) {
             document.getElementById('control_y_position').innerHTML = tab3[1];
             if (gotWCO) document.getElementById('control_ym_position').innerHTML = (WCOy + parseFloat(tab3[1])).toFixed(3);
         }
+
         if ((tab3.length > 2) && (grblaxis > 2)) {
             document.getElementById('control_z_position').innerHTML = tab3[2];
             if (gotWCO) document.getElementById('control_zm_position').innerHTML = (WCOz + parseFloat(tab3[2])).toFixed(3);
         }
+
         if ((tab3.length > 3) && (grblaxis > 3)) {
             document.getElementById('control_a_position').innerHTML = tab3[3];
             if (gotWCO) document.getElementById('control_am_position').innerHTML = (WCOa + parseFloat(tab3[3])).toFixed(3);
         }
+
         if ((tab3.length > 4) && (grblaxis > 4)) {
             document.getElementById('control_b_position').innerHTML = tab3[4];
             if (gotWCO) document.getElementById('control_bm_position').innerHTML = (WCOb + parseFloat(tab3[4])).toFixed(3);
         }
+
         if ((tab3.length > 5) && (grblaxis > 5)) {
             document.getElementById('control_c_position').innerHTML = tab3[5];
             if (gotWCO) document.getElementById('control_cm_position').innerHTML = (WCOc + parseFloat(tab3[5])).toFixed(3);
@@ -262,6 +344,7 @@ function process_grbl_position(response) {
             var tab3 = tab2[0].split(",");
             document.getElementById('control_xm_position').innerHTML = tab3[0];
             if (gotWCO) document.getElementById('control_x_position').innerHTML = (parseFloat(tab3[0]) - WCOx).toFixed(3);
+
             if (tab3.length > 1) {
                 document.getElementById('control_ym_position').innerHTML = tab3[1];
                 if (gotWCO) document.getElementById('control_y_position').innerHTML = (parseFloat(tab3[1]) - WCOy).toFixed(3);
@@ -286,7 +369,7 @@ function process_grbl_position(response) {
     }
 }
 
-function process_grbl_status(response) {
+function processGrblStatus(response) {
 
     var tab1 = response.split("|");
     if (tab1.length > 1) {
@@ -306,10 +389,10 @@ function process_grbl_status(response) {
 
         } else if (tab2.toLowerCase().startsWith("alarm")) {
             if (probe_progress_status != 0) {
-                probe_failed_notification();
+                probeFailedNotification();
             }
             if (surface_progress_status != 0) {                
-                surface_failed_notification();
+                surfaceFailedNotification();
             }
             //grbl_error_msg = "";
             //check we are printing or not 
@@ -327,17 +410,17 @@ function process_grbl_status(response) {
         if (tab2.toLowerCase().startsWith("idle")) {
 
             if(surface_progress_status == 100) {
-                finalize_surfacing();
+                finalizeSurfacing();
             }
             grbl_error_msg = "";
         }
-        document.getElementById('grbl_status_text').innerHTML = translate_text_item(grbl_error_msg);
+        document.getElementById('grbl_status_text').innerHTML = translateTextItem(grbl_error_msg);
         if (tab2.toLowerCase().startsWith("alarm")) document.getElementById('clear_status_btn').style.display = "table-row";
         else document.getElementById('clear_status_btn').style.display = "none";
     }
 }
 
-function finalize_probing() {
+function finalizeProbing() {
     probe_progress_status = 0;
     document.getElementById("probingbtn").style.display = "table-row";
     document.getElementById("probingtext").style.display = "none";
@@ -346,7 +429,7 @@ function finalize_probing() {
     document.getElementById('sd_reset_btn').style.display = "none";    
 }
 
-function finalize_surfacing() {
+function finalizeSurfacing() {
     surface_progress_status = 0;
     grbl_error_msg = "";
     document.getElementById("surfacebtn").style.display = "table-row";
@@ -356,7 +439,7 @@ function finalize_surfacing() {
     document.getElementById('sd_reset_btn').style.display = "none";
 }
 
-function process_grbl_SD(response) {
+function processGrblSd(response) {
     var tab1 = response.split("|SD:");
     if (tab1.length > 1) {
         var tab2 = tab1[1].split("|");
@@ -379,46 +462,46 @@ function process_grbl_SD(response) {
     }
 }
 
-function process_grbl_probe_status(response) {
+function processGrblProbeStatus(response) {
     var tab1 = response.split("|Pn:");
     if (tab1.length > 1) {
         var tab2 = tab1[1].split("|");
         if (tab2[0].indexOf("P") != -1) { //probe touch
-            grbl_set_probe_detected(true);
+            grblSetProbeDetected(true);
         } else { //Probe did not touched
-            grbl_set_probe_detected(false);
+            grblSetProbeDetected(false);
         }
     } else { //no info 
-        grbl_set_probe_detected(false);
+        grblSetProbeDetected(false);
     }
 }
 
-function SendRealtimeCmd(cmd) {
-    SendPrinterCommand(cmd, false, null, null, cmd.charCodeAt(0), 1);
+function sendRealtimeCmd(cmd) {
+    sendPrinterCommand(cmd, false, null, null, cmd.charCodeAt(0), 1);
 }
 
-function grbl_process_status(response) {
-    process_grbl_position(response);
-    process_grbl_status(response);
-    process_grbl_SD(response);
-    process_grbl_probe_status(response);
+function grblProcessStatus(response) {
+    processGrblPosition(response);
+    processGrblStatus(response);
+    processGrblSd(response);
+    processGrblProbeStatus(response);
 }
 
-function grbl_reset_detected(msg) {
+function grblResetDetected(msg) {
     console.log("Reset detected");
 }
 
-function grbl_process_msg(response) {
-    if (grbl_error_msg.length == 0) grbl_error_msg = translate_text_item(response.trim());
+function grblProcessMsg(response) {
+    if (grbl_error_msg.length == 0) grbl_error_msg = translateTextItem(response.trim());
 }
 
-function grbl_reset() {
-    if (probe_progress_status != 0) probe_failed_notification();
-    if (surface_progress_status != 0) surface_failed_notification();
-    SendRealtimeCmd(String.fromCharCode(0x18));
+function grblReset() {
+    if (probe_progress_status != 0) probeFailedNotification();
+    if (surface_progress_status != 0) surfaceFailedNotification();
+    sendRealtimeCmd(String.fromCharCode(0x18));
 }
 
-function grbl_GetProbeResult(response) {
+function grblGetProbeResult(response) {
     console.log("yes");
     var tab1 = response.split(":");
     if (tab1.length > 2) {
@@ -431,51 +514,51 @@ function grbl_GetProbeResult(response) {
                 v = parseFloat(tab2[2]);
                 console.log("z:" + v.toString());
                 cmd += v;
-                SendPrinterCommand(cmd, true, null, null, 53, 1);
+                sendPrinterCommand(cmd, true, null, null, 53, 1);
                 cmd = "G10 L20 P0 Z" + document.getElementById('probetouchplatethickness').value;;
-                SendPrinterCommand(cmd, true, null, null, 10, 1);
+                sendPrinterCommand(cmd, true, null, null, 10, 1);
                 cmd = "G90";
-                SendPrinterCommand(cmd, true, null, null, 90, 1);
-                finalize_probing();
+                sendPrinterCommand(cmd, true, null, null, 90, 1);
+                finalizeProbing();
             }
         } else {
-            probe_failed_notification();
+            probeFailedNotification();
         }
     }
 }
 
-function probe_failed_notification() {
-    finalize_probing();
-    alertdlg(translate_text_item("Error"), translate_text_item("Probe failed !"));
+function probeFailedNotification() {
+    finalizeProbing();
+    alertdlg(translateTextItem("Error"), translateTextItem("Probe failed !"));
     beep(70, 261);
 }
 
-function surface_failed_notification() {
-    finalize_surfacing();
-    alertdlg(translate_text_item("Error"), translate_text_item("Surfacing failed !"));
+function surfaceFailedNotification() {
+    finalizeSurfacing();
+    alertdlg(translateTextItem("Error"), translateTextItem("Surfacing failed !"));
     beep(70, 261);
 }
 
-function StartProbeProcess() {
+function startProbeProcess() {
     var cmd = "G38.2 G91 Z-";
 
-    if (!onprobemaxtravelChange() ||
-        !onprobefeedrateChange() ||
-        !onprobetouchplatethicknessChange()) {
+    if (!onProbeMaxTravelChange() ||
+        !onProbeFeedrateChange() ||
+        !onProbeTouchplateThicknessChange()) {
         return;
     }
     cmd += parseFloat(document.getElementById('probemaxtravel').value) + " F" + parseInt(document.getElementById('probefeedrate').value);
     console.log(cmd);
     probe_progress_status = 1;
-    on_autocheck_status(true);
-    SendPrinterCommand(cmd, true, null, null, 38.2, 1);
+    onAutocheckStatus(true);
+    sendPrinterCommand(cmd, true, null, null, 38.2, 1);
     document.getElementById("probingbtn").style.display = "none";
     document.getElementById("probingtext").style.display = "table-row";
     grbl_error_msg = "";
     document.getElementById('grbl_status_text').innerHTML = grbl_error_msg;
 }
 
-function StartSurfaceProcess() {
+function startSurfaceProcess() {
     var path = "/";
     var dirname = "SurfaceWizard";    
 
@@ -487,7 +570,7 @@ function StartSurfaceProcess() {
     var Zdepth = document.getElementById('surfacezdepth').value;
     var spindle = document.getElementById('surfacespindle').value;
 
-    ncProg = CreateSurfaceProgram(bitdiam, stepover, feedrate, surfacewidth, surfacelength, Zdepth, spindle);
+    ncProg = createSurfaceProgram(bitdiam, stepover, feedrate, surfacewidth, surfacelength, Zdepth, spindle);
 
     filename = "Surface" + "_X" + surfacewidth + "_Y" + surfacelength + "_Z-" + Zdepth + ".nc";
 
@@ -495,18 +578,18 @@ function StartSurfaceProcess() {
 
     file = new File([blob], filename);
     
-    grbl_wiz_step1_dir(path, dirname, file);
+    grblWiz_step1_dir(path, dirname, file);
 }
 
-function grbl_wiz_step1_dir(path, dirname, file) {
+function grblWiz_step1_dir(path, dirname, file) {
     var url = "/upload?path=" + encodeURIComponent(path) + "&action=createdir&filename=" + encodeURIComponent(dirname);
     //console.log("path " + path + " dirname " + dirname + " filename " + file.name)
-    SendGetHttp(url, function() { grbl_wiz_step2_upload(file, path + dirname + "/") }, function() { grbl_wiz_error_dir(path, dirname) });
+    sendGetHttp(url, function() { grblWiz_step2_upload(file, path + dirname + "/") }, function() { grblWiz_error_dir(path, dirname) });
 }
 
-function grbl_wiz_step2_upload(file, path) {
+function grblWiz_step2_upload(file, path) {
     if (http_communication_locked) {
-        alertdlg(translate_text_item("Busy..."), translate_text_item("Communications are currently locked, please wait and retry."));
+        alertdlg(translateTextItem("Busy..."), translateTextItem("Communications are currently locked, please wait and retry."));
         console.log("communication locked");
         return;
     }
@@ -520,31 +603,31 @@ function grbl_wiz_step2_upload(file, path) {
     formData.append('path', path);
     formData.append('myfile[]', file, path + file.name);
     formData.append('path', path);
-    SendFileHttp(url, formData, FilesUploadProgressDisplay, function() { grbl_wiz_step3_launch(path + filename) }, function() { grbl_wiz_error_upload(file, path)});
+    sendFileHttp(url, formData, FilesUploadProgressDisplay, function() { grblWiz_step3_launch(path + filename) }, function() { grblWiz_error_upload(file, path)});
 }
 
-function grbl_wiz_step3_launch(filename) {
+function grblWiz_step3_launch(filename) {
     surface_progress_status = 1;
-    SendPrinterCommand("?", false, null, null, 114, 1);
-    on_autocheck_status(true);
+    sendPrinterCommand("?", false, null, null, 114, 1);
+    onAutocheckStatus(true);
     document.getElementById("surfacebtn").style.display = "none";
     document.getElementById("surfacingtext").style.display = "table-row";
     cmd = "[ESP220]" + filename;
-    SendPrinterCommand(cmd);
+    sendPrinterCommand(cmd);
 }
 
-function grbl_wiz_error_dir(path, dirname) {
+function grblWiz_error_dir(path, dirname) {
     alert("ERROR : Wizard couldn't create dir " + dirname + " in path " + path);
-    alertdlg(translate_text_item("ERROR"), translate_text_item("Wizard couldn't create dir ") + dirname + translate_text_item(" in path ") + path);
-    finalize_surfacing();
+    alertdlg(translateTextItem("ERROR"), translateTextItem("Wizard couldn't create dir ") + dirname + translateTextItem(" in path ") + path);
+    finalizeSurfacing();
 }
 
-function grbl_wiz_error_upload(file, path) {
-    alertdlg(translate_text_item("ERROR"), translate_text_item("Wizard couldn't create file ") + file.name + translate_text_item(" in path ") + path);
-    finalize_surfacing();
+function grblWiz_error_upload(file, path) {
+    alertdlg(translateTextItem("ERROR"), translateTextItem("Wizard couldn't create file ") + file.name + translateTextItem(" in path ") + path);
+    finalizeSurfacing();
 }
 
-function CreateSurfaceProgram(bitdiam, stepover, feedrate, surfacewidth, surfacelength, Zdepth, spindle) {
+function createSurfaceProgram(bitdiam, stepover, feedrate, surfacewidth, surfacelength, Zdepth, spindle) {
     var crlf = "\r\n";
 
     effectiveCuttingWidth = Math.round(1000 * (bitdiam * (1 - stepover/100))) / 1000;

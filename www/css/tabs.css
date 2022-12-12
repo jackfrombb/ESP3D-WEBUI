@@ -1,57 +1,58 @@
 /* Style the tab */
 div.tab {
-    overflow: hidden;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    background-color: #f1f1f1;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+    display: flex;
+    flex-direction: row;
 }
-
 
 /* Style the buttons inside the tab */
-div.tab button {
-    background-color: inherit;
-    float: left;
-    border-top: 1px solid #f1f1f1;
-    border-bottom: 1px solid #f1f1f1;
-    border-left: 1px solid #f1f1f1;
-    border-right: 1px solid #f1f1f1;
-    outline: none;
+.tab button {
+    margin: 2px 5px 2px 5px;
+    width: 8.5em;
+    height: 3em;
+    border-radius: var(--value-border-radius);
+    background-color: var(--color-tab-inactive);
+    appearance: none;
+    border: none;
     cursor: pointer;
-    padding: 12px 14px;
     transition: 0.3s;
-    color: #337AB7;
+    color: var(--color-tab-text-inactive);
 }
+
+    .tab button .center {
+        line-height: normal;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
 
 /* Change background color of buttons on hover */
 div.tab button:hover {
-    background-color: #ddd;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    background-color: var(--color-tab-hover);
+    border-radius: var(--value-border-radius);
+    color: var(--color-tab-text-hover);
 }
 
 /* Create an active/current tablink class */
 div.tab button.active {
-    background-color: #ffffff;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #fff;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    color: #555555;
+    background-color: var(--color-tab-active);
+    border-radius: var(--value-border-radius);
+    color: var(--color-tab-text-active);
 }
 
 /* Style the tab content */
 .tabcontent {
     display: none;
-    padding: 6px 12px;
+    transition: opacity 0.3s;
+    opacity: 0;
+}
 
+
+@media screen and (max-width: 420px) {
+    div.tab {
+        justify-content: space-around;
+    }
+    div.tab button {
+        font-size: small;
+        width: 8em;
+    }
 }

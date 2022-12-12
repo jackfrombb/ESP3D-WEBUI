@@ -12,7 +12,7 @@
                                 <td>&nbsp;&nbsp;</td>
                                 <td>
                                     <label>
-                                        <input type="checkbox" id="autocheck_status" onclick="on_autocheck_status()" />
+                                        <input type="checkbox" id="autocheck_status" onclick="onAutocheckStatus()" />
                                         <span translate>auto-check every:</span>
                                     </label>
                                 </td>
@@ -21,7 +21,7 @@
                         <table class="input-group">
                             <tr>
                                 <td>
-                                    <input class="form-control w4" type="number" min="1" max="99" id="statusInterval_check" value=3 onchange="onstatusIntervalChange()" />
+                                    <input class="form-control w4" type="number" min="1" max="99" id="statusInterval_check" value=3 onchange="onStatusIntervalChange()" />
                                     <span class="input-group-addon form_control" translate>sec</span>
                                 </td>
                             </tr>
@@ -40,7 +40,7 @@
                         <table>
                             <tr>
                                 <td>
-                                    <button id="clear_status_btn" class="btn btn-default btn-xs hide_it" onclick="SendPrinterCommand('$X', true, null,null, 114, 1);" style="padding: 5px 5px 0 5px;">
+                                    <button id="clear_status_btn" class="btn btn-default btn-xs hide_it" onclick="sendPrinterCommand('$X', true, null,null, 114, 1);" style="padding: 5px 5px 0 5px;">
                                         <svg width="2em" height="1.8em" viewBox="-200 -200 1700 1600">
                                             <g transform="translate(50,1200) scale(1, -1)">
                                                 <path fill="black" d="M553 1200h94q20 0 29 -10.5t3 -29.5l-18 -37q83 -19 144 -82.5t76 -140.5l63 -327l118 -173h17q19 0 33 -14.5t14 -35t-13 -40.5t-31 -27q-8 -4 -23 -9.5t-65 -19.5t-103 -25t-132.5 -20t-158.5 -9q-57 0 -115 5t-104 12t-88.5 15.5t-73.5 17.5t-54.5 16t-35.5 12l-11 4 q-18 8 -31 28t-13 40.5t14 35t33 14.5h17l118 173l63 327q15 77 76 140t144 83l-18 32q-6 19 3.5 32t28.5 13zM498 110q50 -6 102 -6q53 0 102 6q-12 -49 -39.5 -79.5t-62.5 -30.5t-63 30.5t-39 79.5z"></path>
@@ -64,7 +64,7 @@
                             <tr>
                                 <td style="width:100%;height:2em;"></td>
                                 <td>
-                                    <button id="sd_pause_btn" class="btn btn-default hide_it" onclick="SendRealtimeCmd('!');" style="padding: 5px 4px 0 5px;">
+                                    <button id="sd_pause_btn" class="btn btn-default hide_it" onclick="sendRealtimeCmd('!');" style="padding: 5px 4px 0 5px;">
                                         <svg width="2em" height="1.4em" viewBox="0 0 1300 1200">
                                             <g transform="translate(50,1200) scale(1, -1)">
                                                 <path fill="blue" d="M250 1000h200q21 0 35.5 -14.5t14.5 -35.5v-800q0 -21 -14.5 -35.5t-35.5 -14.5h-200q-21 0 -35.5 14.5t-14.5 35.5v800q0 21 14.5 35.5t35.5 14.5zM650 1000h200q21 0 35.5 -14.5t14.5 -35.5v-800q0 -21 -14.5 -35.5t-35.5 -14.5h-200q-21 0 -35.5 14.5t-14.5 35.5v800 q0 21 14.5 35.5t35.5 14.5z"></path>
@@ -76,7 +76,7 @@
                                     &nbsp;
                                 </td>
                                 <td>
-                                    <button id="sd_resume_btn" class="btn btn-default hide_it" onclick="SendRealtimeCmd('~');" style="padding: 5px 4px 0 5px;">
+                                    <button id="sd_resume_btn" class="btn btn-default hide_it" onclick="sendRealtimeCmd('~');" style="padding: 5px 4px 0 5px;">
                                         <svg width="2em" height="1.4em" viewBox="0 0 1300 1200">
                                             <g transform="translate(50,1200) scale(1, -1)">
                                                 <path fill="green" d="M243 1074l814 -498q18 -11 18 -26t-18 -26l-814 -498q-18 -11 -30.5 -4t-12.5 28v1000q0 21 12.5 28t30.5 -4z"></path>
@@ -88,7 +88,7 @@
                                     &nbsp;
                                 </td>
                                 <td>
-                                    <button id="sd_reset_btn" class="btn btn-danger hide_it" onclick="grbl_reset();" style="padding: 5px 0px 0px 0px;">
+                                    <button id="sd_reset_btn" class="btn btn-danger hide_it" onclick="grblReset();" style="padding: 5px 0px 0px 0px;">
                                         <svg width="2em" height="1.4em" viewBox="0 0 1200 1200">
                                             <g transform="translate(1200,1200) scale(-1, -1)">
                                                 <path fill="white" d="M947 1060l135 135q7 7 12.5 5t5.5 -13v-362q0 -10 -7.5 -17.5t-17.5 -7.5h-362q-11 0 -13 5.5t5 12.5l133 133q-109 76 -238 76q-116 0 -214.5 -57t-155.5 -155.5t-57 -214.5t57 -214.5t155.5 -155.5t214.5 -57t214.5 57t155.5 155.5t57 214.5h150q0 -117 -45.5 -224 t-123 -184.5t-184.5 -123t-224 -45.5t-224 45.5t-184.5 123t-123 184.5t-45.5 224t45.5 224t123 184.5t184.5 123t224 45.5q192 0 347 -117z"></path>
@@ -109,17 +109,19 @@
                 </tr>
             </table>
             <br>
+
             <div class="tab" id="grbluitablinks">
-                <button class="tablinks" onclick="opentab(event, 'grblcontroltab', 'grbluitabscontent', 'grbluitablinks')" id="grblcontroltablink">
+                <button class="tablinks" onclick="TABS.opentab(event, 'grblcontroltab', 'grbluitabscontent', 'grbluitablinks')" id="grblcontroltablink">
                     <span translate>Override</span>
                 </button>
-                <button class="tablinks hide_it" onclick="opentab(event, 'grblprobetab', 'grbluitabscontent', 'grbluitablinks')" id="grblprobetablink">
+                <button class="tablinks hide_it" onclick="TABS.opentab(event, 'grblprobetab', 'grbluitabscontent', 'grbluitablinks')" id="grblprobetablink">
                     <span translate>Probe</span>
                 </button>
-                <button class="tablinks hide_it" onclick="opentab(event, 'grblsurfacetab', 'grbluitabscontent', 'grbluitablinks')" id="grblsurfacetablink">
+                <button class="tablinks hide_it" onclick="TABS.opentab(event, 'grblsurfacetab', 'grbluitabscontent', 'grbluitablinks')" id="grblsurfacetablink">
                     <span translate>Surfacing Wizard</span>
                 </button>
             </div>
+
             <div class="panel panel-default">
                 <div class="panel-body panel-flex-main">
                     <div id="grbluitabscontent">
@@ -130,7 +132,7 @@
                                 </tr>
                                 <tr>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x92,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x92,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -148,7 +150,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x94,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x94,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -166,7 +168,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x90,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x90,0x0));" style="padding: 5px 4px 0 5px;">
                                             <svg width="1.3em" height="1.4em" viewBox="0 0 1300 1200">
                                                 <g transform="translate(50,1200) scale(1, -1)">
                                                     <path fill="black" d="M947 1060l135 135q7 7 12.5 5t5.5 -13v-362q0 -10 -7.5 -17.5t-17.5 -7.5h-362q-11 0 -13 5.5t5 12.5l133 133q-109 76 -238 76q-116 0 -214.5 -57t-155.5 -155.5t-57 -214.5t57 -214.5t155.5 -155.5t214.5 -57t214.5 57t155.5 155.5t57 214.5h150q0 -117 -45.5 -224 t-123 -184.5t-184.5 -123t-224 -45.5t-224 45.5t-184.5 123t-123 184.5t-45.5 224t45.5 224t123 184.5t184.5 123t224 45.5q192 0 347 -117z"></path>
@@ -175,7 +177,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x93,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x93,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -193,7 +195,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x91,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x91,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -216,7 +218,7 @@
                                 </tr>
                                 <tr>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x9B,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x9B,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -234,7 +236,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x9D,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x9D,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -252,7 +254,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x99,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x99,0x0));" style="padding: 5px 4px 0 5px;">
                                             <svg width="1.3em" height="1.4em" viewBox="0 0 1300 1200">
                                                 <g transform="translate(50,1200) scale(1, -1)">
                                                     <path fill="black" d="M947 1060l135 135q7 7 12.5 5t5.5 -13v-362q0 -10 -7.5 -17.5t-17.5 -7.5h-362q-11 0 -13 5.5t5 12.5l133 133q-109 76 -238 76q-116 0 -214.5 -57t-155.5 -155.5t-57 -214.5t57 -214.5t155.5 -155.5t214.5 -57t214.5 57t155.5 155.5t57 214.5h150q0 -117 -45.5 -224 t-123 -184.5t-184.5 -123t-224 -45.5t-224 45.5t-184.5 123t-123 184.5t-45.5 224t45.5 224t123 184.5t184.5 123t224 45.5q192 0 347 -117z"></path>
@@ -261,7 +263,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x9C,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x9C,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -279,7 +281,7 @@
                                         </button>
                                     </td>
                                     <td class="td_center">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x9A,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x9A,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -304,7 +306,7 @@
                             <table width="100%">
                                 <tr>
                                     <td class="td_center" width="33%">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0x9E,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0x9E,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -323,7 +325,7 @@
                                     </td>
                                     <td>&nbsp;</td>
                                     <td class="td_center" width="33%">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0xA0,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0xA0,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -342,7 +344,7 @@
                                     </td>
                                     <td>&nbsp;</td>
                                     <td class="td_center" width="33%">
-                                        <button class="btn btn-default" onclick="SendRealtimeCmd(String.fromCharCode(0xA1,0x0));" style="padding: 5px 4px 0 5px;">
+                                        <button class="btn btn-default" onclick="sendRealtimeCmd(String.fromCharCode(0xA1,0x0));" style="padding: 5px 4px 0 5px;">
                                             <table>
                                                 <tr>
                                                     <td>
@@ -375,7 +377,7 @@
                                     <td>
                                         <div class="input-group">
                                             <span class="input-group-addon hide_it"></span>
-                                            <input class="form-control w6" type="number" min="1" id="probemaxtravel" onchange="onprobemaxtravelChange()" />
+                                            <input class="form-control w6" type="number" min="1" id="probemaxtravel" onchange="onProbeMaxTravelChange()" />
                                             <span class="input-group-addon hide_it"></span>
                                         </div>
                                     </td>
@@ -399,7 +401,7 @@
                                     <td>
                                         <div class="input-group">
                                             <span class="input-group-addon hide_it"></span>
-                                            <input class="form-control w6" type="number" min="1" id="probefeedrate" onchange="onprobefeedrateChange()" />
+                                            <input class="form-control w6" type="number" min="1" id="probefeedrate" onchange="onProbeFeedrateChange()" />
                                             <span class="input-group-addon hide_it"></span>
                                         </div>
                                     </td>
@@ -423,7 +425,7 @@
                                     <td>
                                         <div class="input-group">
                                             <span class="input-group-addon hide_it"></span>
-                                            <input class="form-control w5" type="number" min="0" id="probetouchplatethickness" onchange="onprobetouchplatethicknessChange()" />
+                                            <input class="form-control w5" type="number" min="0" id="probetouchplatethickness" onchange="onProbeTouchplateThicknessChange()" />
                                             <span class="input-group-addon hide_it"></span>
                                         </div>
                                     </td>
@@ -454,7 +456,7 @@
                                                 </tr>
                                             </table>
                                         </span>
-                                        <button class="btn btn-primary" id="probingbtn" onclick="StartProbeProcess();" translate>Start Probe</button>
+                                        <button class="btn btn-primary" id="probingbtn" onclick="startProbeProcess();" translate>Start Probe</button>
                                     </td>
                                 </tr>
                             </table>
@@ -539,7 +541,7 @@
                                                 </tr>
                                             </table>
                                         </span>
-                                        <button class="btn btn-primary" id="surfacebtn" onclick="StartSurfaceProcess();" translate>Start Surfacing</button>
+                                        <button class="btn btn-primary" id="surfacebtn" onclick="startSurfaceProcess();" translate>Start Surfacing</button>
                                     </td>
                                 </tr>
                             </table>
@@ -551,7 +553,7 @@
     </div>
     <div class="panel-footer">
         <div class="panel-flex-row">
-            <button id="global_reset_btn" class="btn btn-danger" onclick="grbl_reset();" style="padding: 5px 0px 0px 0px;">
+            <button id="global_reset_btn" class="btn btn-danger" onclick="grblReset();" style="padding: 5px 0px 0px 0px;">
                 <svg width="2em" height="1.4em" viewBox="0 0 1200 1200">
                     <g transform="translate(1200,1200) scale(-1, -1)">
                         <path fill="white" d="M947 1060l135 135q7 7 12.5 5t5.5 -13v-362q0 -10 -7.5 -17.5t-17.5 -7.5h-362q-11 0 -13 5.5t5 12.5l133 133q-109 76 -238 76q-116 0 -214.5 -57t-155.5 -155.5t-57 -214.5t57 -214.5t155.5 -155.5t214.5 -57t214.5 57t155.5 155.5t57 214.5h150q0 -117 -45.5 -224 t-123 -184.5t-184.5 -123t-224 -45.5t-224 45.5t-184.5 123t-123 184.5t-45.5 224t45.5 224t123 184.5t184.5 123t224 45.5q192 0 347 -117z"></path>
