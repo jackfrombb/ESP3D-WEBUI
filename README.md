@@ -31,6 +31,7 @@ For the same reason, some strange solutions can be noticed in the project
 <li>[ ] Adding objectness to the JS code</li>
 <li>[x] Translating JS to ES6</li>
 <li>[x] Added scss support</li>
+<li>[x] Deleted bootstrap</li>
 </ul>
 
 <p>
