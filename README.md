@@ -18,7 +18,6 @@ For the same reason, some strange solutions can be noticed in the project
 <br/>
 <h1>Changes for users:</h1>
 <ul>
-<li>[ ] Keyboard shortcuts </li>
 <li>[ ] Visual display of parameters</li>
 <li>[ ] Information about the current task</li>
 <li>[x] Dark/Light theme</li>
